@@ -15,8 +15,21 @@ export default function Signup(){
     if(password !== confirm){ setError('Passwords do not match'); return }
     try{
       const res = await API.post('/signup',{ name, email, password })
-      if(res.token){ localStorage.setItem('mc_token', res.token); localStorage.setItem('mc_user', JSON.stringify(res.user)); window.dispatchEvent(new Event('authChanged')); alert('Account created'); navigate('/profile') }
-    }catch(err){ setError(err.message || 'Signup failed') }
+      if(res.token){ 
+        localStorage.setItem('mc_token', res.token); 
+        localStorage.setItem('mc_user', JSON.stringify(res.user)); 
+        window.dispatchEvent(new Event('authChanged')); 
+        alert('Account created'); 
+        navigate('/profile') 
+      }
+    }catch(err){ 
+      console.error('Signup error:', err)
+      if(err.message && err.message.includes('fetch')) {
+        setError('❌ Cannot connect to server. Backend is not running. See instructions below.')
+      } else {
+        setError(err.message || 'Signup failed')
+      }
+    }
   }
 
   return (
